@@ -3,13 +3,13 @@
 import {
   Box,Button,Typography,TextField,MenuItem,Select, InputLabel,FormControl} from '@mui/material';
 import { useForm } from 'react-hook-form';
-import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { useState } from 'react';
-import { addProject } from '@/store/slice/team'; 
+import { addProject } from '@/store/slice/project'; 
+import type { SelectChangeEvent } from '@mui/material/Select';
 
 interface FormData {
   projectName: string;
@@ -33,20 +33,26 @@ export default function TeamLeadForm() {
 
   const dispatch = useDispatch();
   const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+  console.log("Current User: ",currentUser)
   const users = useSelector((state: RootState) => state.user.users);
   const projects = useSelector((state: RootState) => state.project.projects);
+  console.log("Projects: ",projects);
 
   const eligibleUsers = users.filter(
     (user) => user.role !== 'admin' && !user.isTeamLead && user.id !== currentUser.id
   );
+  const getUserName = (id: string) => users.find(user => user.id === id)?.name || '[Unknown]';
 
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
-  const handleChangeMembers = (e: any) => {
-    setSelectedMembers(e.target.value);
+ 
+
+  const handleChangeMembers = (e: SelectChangeEvent<string[]>) => {
+    setSelectedMembers(e.target.value as string[]);
   };
 
   const onSubmit = (data: FormData) => {
+    console.log("Data inside team lead form: ",data);
     const members = selectedMembers.map((id) => {
       const user = users.find((u) => u.id === id);
       return {
@@ -61,12 +67,15 @@ export default function TeamLeadForm() {
       members,
     };
 
+    console.log("Project to be dispatched: ",project)
+
     dispatch(addProject(project));
     reset();
     setSelectedMembers([]);
   };
 
-  const myProjects = projects.filter((proj) => proj.teamLeadId === currentUser.id);
+  // const myProjects = projects.filter((proj) => proj.teamLeadId === currentUser.id);
+  // console.log("My Projects: ",myProjects);
 
   return (
     <Box
@@ -82,9 +91,9 @@ export default function TeamLeadForm() {
         Welcome Team Lead, {currentUser.name}
       </Typography>
 
-      <Grid container spacing={4} sx={{ maxWidth: '900px', margin: '0 auto' }}>
-        <Grid item xs={12} md={6}>
-          <Typography variant="body1">
+      <Box>
+        <Box sx={{display:'flex', flexDirection:'column',gap:'1rem'}}>
+          <Typography variant="body1" sx={{marginBottom:'1rem'}}>
             ➤ Create Project
           </Typography>
 
@@ -118,36 +127,41 @@ export default function TeamLeadForm() {
               Create Project
             </Button>
           </form>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={6}>
+        <Box sx={{display:'flex', flexDirection:'column',gap:'1rem', marginTop:'2rem'}}>
           <Typography variant="h6" gutterBottom>
             ➤ My Projects
           </Typography>
-          {myProjects.length === 0 ? (
+          {projects.length === 0 ? (
             <Typography>No projects created yet</Typography>
           ) : (
-            myProjects.map((project, index) => (
+            projects.map((project, index) => (
               <Box
                 key={index}
                 sx={{
                   padding: '1rem',
                   marginBottom: '1rem',
-                  border: '1px solid #ccc',
+                  border: '1px solid black',
                   borderRadius: '0.5rem',
                 }}
               >
                 <Typography variant="body1">
                   ▸ {project.name}
                 </Typography>
+                <Typography variant="body1">
+                  <Box><b>Team Lead: </b> </Box>
+                  <Box>{getUserName(project.teamLeadId)}</Box>
+                </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  - Members: {project.members.map((m) => m.name).join(', ')}
+                  <Box>Members:</Box>
+                  <Box> {project.members.map((m) => m.name).join(', ')}</Box>
                 </Typography>
               </Box>
             ))
           )}
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 }

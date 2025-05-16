@@ -3,7 +3,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { Box, Grid, Typography, Button } from '@mui/material';
+import { Box, Grid, Typography,} from '@mui/material';
+import LogoutButton from './logout-button';
+
 
 interface Member {
   id: string;
@@ -33,30 +35,22 @@ const UserProjects: React.FC = () => {
       sx={{
         padding: '2rem',
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
         minHeight: '90vh',
       }}
     >
-      <Typography variant="h4" gutterBottom>
+     <Box sx={{display:'flex',flexDirection:'row', alignItems:'center', justifyContent:'center', gap:'2rem', height:'100%', width:'100%'}}>
+       <Typography variant="h4" gutterBottom>
         Welcome, {currentUser.name}
       </Typography>
-
-      <Button
-        variant="outlined"
-        color="secondary"
-        sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
-        onClick={() => {
-          sessionStorage.removeItem('currentUser');
-          window.location.href = '/login';
-        }}
-      >
-        Logout
-      </Button>
+      <Box sx={{position:'absolute', right:50, top: 40}}>
+        <LogoutButton/>
+      </Box>
+     </Box>
 
       <Grid container spacing={4} sx={{ maxWidth: '900px', marginTop: '2rem' }}>
-        <Grid item xs={12}>
+        <Box>
           <Typography variant="h6" gutterBottom>
             ➤ My Projects
           </Typography>
@@ -75,18 +69,18 @@ const UserProjects: React.FC = () => {
                 }}
               >
                 <Typography variant="body1">
-                  ▸ <strong>{project.name}</strong>
+                  ▸ <b>{project.name}</b>
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  - Team Lead: {getUserName(project.teamLeadId)}
+                  <b>Team Lead:</b> {getUserName(project.teamLeadId)}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  - Members: {project.members.map(member => getUserName(member.id)).join(', ')}
+                  <b>Members:</b> {project.members.map(member => getUserName(member.id)).join(', ')}
                 </Typography>
               </Box>
             ))
           )}
-        </Grid>
+        </Box>
       </Grid>
     </Box>
   );
