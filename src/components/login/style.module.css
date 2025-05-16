@@ -1,0 +1,41 @@
+
+.linkColor{
+    color: #7050c0;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.changeColor{
+  
+    color: rgb(160, 160, 160);
+    display: flex;
+    flex-direction: column;
+}
+
+.line-through{
+    text-decoration: underline;
+}
+
+.formClass{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.flex{
+    display: flex;
+    flex-direction: column; 
+}
+
+.checkbox{
+    color: white;
+    display: flex;
+    gap: 1rem;
+}
+
+@media screen and (max-width:600px){
+    .formClass{
+        gap: 0.5rem;
+    }
+}
